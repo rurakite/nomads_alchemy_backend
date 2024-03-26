@@ -9,7 +9,7 @@ class CountryImageInline(admin.TabularInline):
 
 
 @admin.register(models.Costumer)
-class CountryAdmin(admin.ModelAdmin):
+class CostumerAdmin(admin.ModelAdmin):
     list_display = ["user", "bio", "cover_photo"]
 
 
@@ -22,7 +22,7 @@ class CountryImageAdmin(admin.ModelAdmin):
 
 @admin.register(models.Country)
 class CountryAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "capital", "continent", "display_flag_image"]
+    list_display = ["id", "name", "capital", "continent", "display_flag_image", "display_country_image"]
     search_fields = ["name", "capital"]
     list_filter = ["continent"]
     inlines = [CountryImageInline]
@@ -33,6 +33,16 @@ class CountryAdmin(admin.ModelAdmin):
         )
 
     display_flag_image.short_description = "Flag"
+
+    def display_country_image(self, obj):
+        if obj.images.exists():
+            return format_html(
+                '<img src="{}" style="max-width:40px; max-height:40px;" />', obj.images.first().image.url
+            )
+        else:
+            return "No Image"
+
+    display_country_image.short_description = "Image"
 
 
 @admin.register(models.Review)
